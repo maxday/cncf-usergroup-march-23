@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type pizza struct {
@@ -44,7 +45,7 @@ func getPizzas(c *gin.Context) {
 func getPizzaById(c *gin.Context) {
 	id := c.Param("id")
 	url := fmt.Sprintf("http://pizza-details:7081/pizza/%s", id)
-	resp, err := http.Get(url)
+	resp, err := otelhttp.Get(c.Request.Context(), url)
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadGateway)
 		return
